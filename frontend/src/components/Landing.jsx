@@ -1,5 +1,6 @@
 import React from "react";
 import Select from "./Select";
+import Form from "./Form";
 import { GoogleSignIn } from "react-google-login";
 
 class Landing extends React.Component {
@@ -48,7 +49,7 @@ class Landing extends React.Component {
 									<a className="btn btn-link" href="/Forum">
 										Forum
 									</a>
-									<a className="btn btn-link" href="#">
+									<a className="btn btn-link" href="/Inbox">
 										Inbox
 									</a>
 									{loginbtn}
@@ -94,6 +95,7 @@ class Landing extends React.Component {
 
 				<div id="select" className="container d-flex flex-row">
 					<Select profileData={this.props.profileData} />
+					<Form />
 				</div>
 			</div>
 		);

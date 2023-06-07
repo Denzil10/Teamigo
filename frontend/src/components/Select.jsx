@@ -43,16 +43,17 @@ class Select extends React.Component {
 		} else if (curr == "Send invite") {
 			final = "player_list";
 		} else if (curr == "Post your availability") {
+			final = "resume_form";
 			this.setState({
 				type: "finding",
 			});
-			final = "resume_form";
 		} else {
+			final = "hire_form";
 			this.setState({
 				type: "hiring",
 			});
-			final = "hire_form";
 		}
+
 		this.setState({
 			final_opt: final,
 		});

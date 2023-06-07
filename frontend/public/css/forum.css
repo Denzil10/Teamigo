@@ -4,18 +4,34 @@
 }
 
 #forum_display {
-	display: flex;
-	align-self: center !important;
+	/* here i dont understand why justify center collapses */
+	margin: auto;
+	margin-top: 9em;
 	width: 60em;
 	height: 20em;
-	background-color: black;
+	background-color: rgb(87, 174, 224);
+	box-sizing: border-box;
 }
 
 .row1 {
-	min-height: 5em;
+	margin-top: 2em;
+	background-color: aliceblue;
+	height: 5em;
 	width: 90%;
+	box-sizing: border-box;
+}
+.toprow {
+	margin-top: 170em;
+	background-color: aliceblue;
+	height: 5em;
+	width: 90%;
+	box-sizing: border-box;
 }
 
 .col1 {
 	width: 14%;
+}
+
+form {
+	width: 105%;
 }
