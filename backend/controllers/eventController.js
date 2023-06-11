@@ -19,4 +19,19 @@ const addEvent = async (req, res, next) => {
     res.json(result);
 }
 
+const getEvents = async (req, res, next) => {
+    const result = await Event.find();
+    console.log(result)
+    let arr = [];
+    result.forEach(element => {
+        const { eventName, organizer, description, minTeamSize, maxTeamSize, timeStamp } = element;
+        arr.push(
+            {
+                eventName, organizer, description, minTeamSize, maxTeamSize, timeStamp
+            }
+        )
+    });
+    res.json({ result: arr })
+}
 exports.addEvent = addEvent
+exports.getEvents = getEvents
