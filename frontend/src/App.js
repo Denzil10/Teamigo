@@ -5,8 +5,6 @@ import Forum from "./pages/Forum"
 import React, { useEffect, useState } from 'react';
 
 
-
-
 function App() {
 
 
