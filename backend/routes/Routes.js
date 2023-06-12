@@ -7,6 +7,7 @@ const eventController = require("../controllers/eventController")
 
 //user Routes
 router.post("/users/addUser", userController.addUser);
+router.get("/users/getAllUsers", userController.getAllUsers);
 
 //Event Routes
 router.post("/events/addEvent", eventController.addEvent);

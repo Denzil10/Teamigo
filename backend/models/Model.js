@@ -3,6 +3,7 @@ const Schema = mongoose.Schema
 
 const userSchema = new Schema({
     googleId: { type: String, required: true },
+    name: { type: String, required: true },
     invites: [{ type: mongoose.Types.ObjectId, required: true, ref: 'Invites' }],
     requests: [{ type: mongoose.Types.ObjectId, required: true, ref: 'Requests' }]
 
@@ -28,5 +29,16 @@ const eventSchema = new Schema({
 })
 const Event = mongoose.model('Events', eventSchema);
 
+const teamsSchema = new Schema({
+    teamName: { type: String, required: true },
+    leaderID: { type: mongoose.Types.ObjectId, required: true },
+    description: { type: String, required: true },
+    members: [{ type: mongoose.Types.ObjectId, required: true, ref: 'User' }]
+
+})
+const Team = mongoose.model('Team', teamsSchema);
+
+
 exports.User = User
-exports.Event = Event 
+exports.Event = Event
+exports.Team = Team
