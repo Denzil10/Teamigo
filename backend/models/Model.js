@@ -39,6 +39,17 @@ const teamsSchema = new Schema({
 const Team = mongoose.model('Team', teamsSchema);
 
 
+//to be changed
+const inviteSchema = new Schema({
+    sendingTeamName: { type: String, required: true },
+    description: { type: String, required: true },
+    eventName: { type: String, required: true },
+})
+const Invite = mongoose.model('Invite', inviteSchema);
+
+
+
 exports.User = User
 exports.Event = Event
 exports.Team = Team
+exports.Invite = Invite
