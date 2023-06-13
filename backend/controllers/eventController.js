@@ -23,10 +23,10 @@ const getEvents = async (req, res, next) => {
     const result = await Event.find();
     let arr = [];
     result.forEach(element => {
-        const { eventName, organizer, description, minTeamSize, maxTeamSize, timeStamp } = element;
+        const { _id, eventName, organizer, description, minTeamSize, maxTeamSize, timeStamp } = element;
         arr.push(
             {
-                eventName, organizer, description, minTeamSize, maxTeamSize, timeStamp
+                _id, eventName, organizer, description, minTeamSize, maxTeamSize, timeStamp
             }
         )
     });
