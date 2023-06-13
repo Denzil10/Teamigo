@@ -35,4 +35,15 @@ const addParticipantAndTeam = async (req, res, next) => {
 }
 
 
+
+const getParticipantsByEventId = async (req, res, next) => {
+    const { eventId } = req.body;
+    let result = await Participant.find({
+        eventId: eventId
+    })
+    console.log(result);
+    res.json({ result: result })
+}
+
 exports.addParticipantAndTeam = addParticipantAndTeam
+exports.getParticipantsByEventId = getParticipantsByEventId

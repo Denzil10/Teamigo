@@ -25,11 +25,36 @@ const addTeam = async (req, res, next) => {
 
 //not complete
 const getTeamsByEventId = async (req, res, next) => {
-    const { teamName, description, leaderMongoId, members, eventId } = req.body;
+    const { eventId } = req.body;
+
+    let event = await Event.find({
+        _id: eventId
+    })
+    let arrOfTeams = event[0].teamIDs;
+    let result = [];
+
+    for (let i = 0; i < arrOfTeams.length; i++) {
+        const element = arrOfTeams[i];
+        const team = await Team.findOne({
+            _id: element
+        })
+        result.push(team)
 
 
+    }
 
-    res.json(result);
+    // arrOfTeams.forEach(async element => {
+    //     let team = await Team.find({
+    //         _id: element
+    //     })
+    //     console.log(team)
+    //     result.push(team)
+    // });
+
+
+    //console.log(result)
+    res.json({ result: result });
+    // res.json(null);
 }
 
 exports.addTeam = addTeam

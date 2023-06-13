@@ -18,7 +18,7 @@ router.get("/events/getEvents", eventController.getEvents);
 
 //Team Routes
 router.post("/teams/addTeam", teamController.addTeam); //outdated
-router.get("/teams/getTeamsByEventId", teamController.getTeamsByEventId);
+router.post("/teams/getTeamsByEventId", teamController.getTeamsByEventId);
 
 //Invites Routes
 router.post("/invites/addInvite", inviteController.sendInvite); //to be changed
@@ -26,6 +26,6 @@ router.get("/invites/getInvites", inviteController.getInvites); //to be changed
 
 //Participant and Team
 router.post("/participant/addParticipantAndTeam", participantController.addParticipantAndTeam);
-
+router.post("/participant/getParticipantsByEventId", participantController.getParticipantsByEventId);
 
 module.exports = router;
