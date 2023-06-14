@@ -54,6 +54,29 @@ const rejectInvite = async (req, res, next) => {
     res.json({ result: [userResult, inviteResult] });
 }
 
+
+const acceptInvite = async (req, res, next) => {
+    const { userId, inviteId, teamId } = req.body;
+
+    const user = await User.findOne({
+        _id: userId
+    })
+    let arrOfInvites = user.invites;
+
+    let index = arrOfInvites.indexOf(inviteId);
+
+    if (index !== -1) {
+        arrOfInvites.splice(index, 1);
+    }
+
+    const userResult = await user.save();
+    const inviteResult = await Invite.deleteOne({
+        _id: inviteId
+    })
+    res.json({ result: [userResult, inviteResult] });
+}
+
 exports.sendInvite = sendInvite
 exports.getInvites = getInvites
 exports.rejectInvite = rejectInvite
+exports.acceptInvite = acceptInvite

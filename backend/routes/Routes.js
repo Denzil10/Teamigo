@@ -6,6 +6,7 @@ const eventController = require("../controllers/eventController")
 const inviteController = require("../controllers/inviteController")
 const teamController = require("../controllers/teamController")
 const participantController = require("../controllers/participantController")
+const requestController = require("../controllers/requestController")
 
 //user Routes
 router.post("/users/addUser", userController.addUser);
@@ -32,4 +33,7 @@ router.post("/invites/rejectInvite", inviteController.rejectInvite); //to be cha
 router.post("/participant/addParticipantAndTeam", participantController.addParticipantAndTeam);
 router.post("/participant/getParticipantsByEventId", participantController.getParticipantsByEventId);
 
+
+//Requests Routes
+router.post('/requests/sendRequest', requestController.sendRequest)
 module.exports = router;

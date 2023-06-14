@@ -38,7 +38,6 @@ const teamsSchema = new Schema({
 const Team = mongoose.model('Team', teamsSchema);
 
 
-//to be changed
 const inviteSchema = new Schema({
     sendingTeamId: { type: mongoose.Types.ObjectId, required: true },
     description: { type: String, required: true },
@@ -56,8 +55,17 @@ const participantSchema = new Schema({
 const Participant = mongoose.model('Participant', participantSchema);
 
 
+const requestSchema = new Schema({
+    sendingParticipantId: { type: mongoose.Types.ObjectId, required: true },
+    eventId: { type: mongoose.Types.ObjectId, required: true },
+    teamId: { type: mongoose.Types.ObjectId, required: true },
+    description: { type: String, required: true }
+})
+const Request = mongoose.model('Request', requestSchema)
+
 exports.User = User
 exports.Event = Event
 exports.Team = Team
 exports.Invite = Invite
 exports.Participant = Participant
+exports.Request = Request
