@@ -37,4 +37,6 @@ router.post("/participant/getParticipantsByEventId", participantController.getPa
 //Requests Routes
 router.post('/requests/sendRequest', requestController.sendRequest)
 router.post('/requests/getRequestsByUserId', requestController.getRequestsByUserId)
+router.post('/requests/acceptRequest', requestController.acceptRequest)
+
 module.exports = router;

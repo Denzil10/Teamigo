@@ -43,6 +43,51 @@ const getRequestsByUserId = async (req, res, next) => {
 }
 
 
+const acceptRequest = async (req, res, next) => {
+    const { requestId } = req.body;
+
+    const request = await Request.findOne({
+        _id: requestId
+
+    })
+    const sendingParticipant = await User.findOne({
+        _id: request.sendingParticipantId
+    });
+
+    const team = await Team.findOne({
+        _id: request.teamId
+    })
+    team.members.push(sendingParticipant.name);
+
+
+    const teamLeader = await User.findOne({
+        _id: team.leaderId
+    })
+
+    let arrOfRequests = teamLeader.requests;
+
+    let index = arrOfRequests.indexOf(requestId);
+
+    if (index !== -1) {
+        arrOfRequests.splice(index, 1);
+    }
+
+
+    //code to be added
+    //to send notification that request is accepted
+    //by the team leader
+
+    const teamResult = await team.save();
+    const requestResult = await Request.deleteOne({
+        _id: requestId
+    })
+    const teamLeaderResult = await teamLeader.save();
+
+
+    res.json({ result: [teamResult, requestResult, teamLeaderResult] });
+}
+
 
 exports.sendRequest = sendRequest
 exports.getRequestsByUserId = getRequestsByUserId
+exports.acceptRequest = acceptRequest
