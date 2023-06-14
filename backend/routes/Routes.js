@@ -19,10 +19,12 @@ router.get("/events/getEvents", eventController.getEvents);
 //Team Routes
 router.post("/teams/addTeam", teamController.addTeam); //outdated
 router.post("/teams/getTeamsByEventId", teamController.getTeamsByEventId);
+router.post("/teams/getTeamsByTeamLeaderId", teamController.getTeamsByTeamLeaderId); //not tested
+
 
 //Invites Routes
-router.post("/invites/addInvite", inviteController.sendInvite); //to be changed
-router.get("/invites/getInvites", inviteController.getInvites); //to be changed
+router.post("/invites/sendInvite", inviteController.sendInvite);
+router.post("/invites/getInvites", inviteController.getInvites); //to be changed
 
 //Participant and Team
 router.post("/participant/addParticipantAndTeam", participantController.addParticipantAndTeam);

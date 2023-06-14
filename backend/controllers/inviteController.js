@@ -1,32 +1,35 @@
 const { Invite, User } = require("../models/Model")
 
-//to be changed
-const sendInvite = async (req, res, next) => {
-    const { sendingTeamName, description, eventName, recipientName } = req.body;
-    const newInvite = new Invite({
-        sendingTeamName,
-        description,
-        eventName
-    })
-    const result = await newInvite.save();
 
-    res.json(result);
+const sendInvite = async (req, res, next) => {
+    const { sendingTeamId, description, eventId, recipientId } = req.body;
+    const newInvite = new Invite({
+        sendingTeamId,
+        description,
+        eventId
+    })
+    const inviteResult = await newInvite.save();
+    const user = await User.findOne({
+        _id: recipientId
+    })
+    user.invites.push(newInvite._id);
+    const userResult = await user.save();
+    res.json({ result: [inviteResult, userResult] });
 }
 
-//to be changed
 const getInvites = async (req, res, next) => {
-    const result = await Invite.find();
+    const { userId } = req.body;
+    const user = await User.findOne({
+        _id: userId
+    })
+    const arrOfInviteId = user.invites;
+
     let arr = [];
-    result.forEach(element => {
-        const { sendingTeamName, description, eventName } = element;
-        arr.push(
-            {
-                sender: sendingTeamName,
-                description,
-                eventName
-            }
-        )
-    });
+    for (let i = 0; i < arrOfInviteId.length; i++) {
+        const element = arrOfInviteId[i];
+        let invite = await Invite.findOne(element)
+        arr.push(invite)
+    }
     res.json({ result: arr })
 }
 
