@@ -25,6 +25,8 @@ router.post("/teams/getTeamsByTeamLeaderId", teamController.getTeamsByTeamLeader
 //Invites Routes
 router.post("/invites/sendInvite", inviteController.sendInvite);
 router.post("/invites/getInvites", inviteController.getInvites); //to be changed
+router.post("/invites/rejectInvite", inviteController.rejectInvite); //to be changed
+
 
 //Participant and Team
 router.post("/participant/addParticipantAndTeam", participantController.addParticipantAndTeam);
