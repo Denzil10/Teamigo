@@ -122,7 +122,10 @@ class Select extends React.Component {
 
 		// PROVIDE FORMS
 		else {
-			console.log(this.state.type);
+			console.log(
+				"when returning forms by select " +
+					JSON.stringify(this.props.profileData)
+			);
 			return (
 				<Form
 					profileData={this.props.profileData}

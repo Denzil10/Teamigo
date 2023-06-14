@@ -1,6 +1,7 @@
 import React from "react";
 import axios from "axios";
 import Options from "./Options";
+
 class Form extends React.Component {
 	constructor(props) {
 		super(props);
@@ -9,33 +10,47 @@ class Form extends React.Component {
 			members: new Array(),
 		};
 	}
+	componentDidMount() {
+		axios
+			.get("http://localhost:5000/events/getEvents")
+			.then((response) => {
+				this.setState({
+					event_data: response.data.result,
+				});
+			})
+			.catch((error) => {
+				console.log("An error occurred:", error);
+			});
+	}
 
 	postOnForum = () => {
-		let data = this.props.profileData;
-		// if (typeof data != undefined) {
-		// 	if (Object.keys(data).length > 0) {
-		// 		let namee = data.name;
-		// 	}
-		// }
+		let profile_data = this.props.profileData;
 		let box = document.querySelector("#post_box");
+		if (profile_data.name == undefined) profile_data.name = "need login";
 
-		if (data.name == undefined) data.name = "need login";
+		//post only if person is logged in
 
-		axios.post("http://localhost:5000/blog/post", {
-			name: `${data.name}`,
-			msg: `${box.value}`,
-			event: `${this.props.event}`,
-			type: `${this.props.type}`,
+		axios.post("http://localhost:5000/participant/addParticipantAndTeam", {
+			google_id: `${profile_data.googleId}`,
+			desc: `${box.value}`,
+			event_id: this.getEventId(),
+			type_id: `${this.props.type}`,
 			team: `${JSON.stringify(this.state.members)}`,
 		});
+	};
 
-		//if they are executed in different order then problem can occur
+	getEventId = () => {
+		let event_name = this.props.event;
+		let event_list = this.state.event_data;
+		console.log(event_list);
+		console.log(event_name);
 
-		if (this.state.members.length > 0) {
-			axios.post("http://localhost:5000/team/add", {
-				leader: `${data.name}`,
-				event: `${this.props.event}`,
-				team: `${JSON.stringify(this.state.members)}`,
+		if (event_list) {
+			console.log("we in");
+			Object.keys(event_list).forEach((ele) => {
+				if (ele.eventName == event_name) {
+					return ele._id;
+				}
 			});
 		}
 	};
@@ -97,6 +112,9 @@ class Form extends React.Component {
 	};
 
 	render() {
+		console.log("profile data " + JSON.stringify(this.props.profileData));
+		console.log("event id " + this.getEventId());
+
 		return (
 			<div>
 				<form action="">
