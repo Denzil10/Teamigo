@@ -26,4 +26,23 @@ const sendRequest = async (req, res, next) => {
 
 
 
+const getRequestsByUserId = async (req, res, next) => {
+    const { userId } = req.body;
+    const user = await User.findOne({
+        _id: userId
+    })
+    const arrOfRequestId = user.requests;
+
+    let arr = [];
+    for (let i = 0; i < arrOfRequestId.length; i++) {
+        const element = arrOfRequestId[i];
+        let request = await Request.findOne(element)
+        arr.push(request)
+    }
+    res.json({ result: arr })
+}
+
+
+
 exports.sendRequest = sendRequest
+exports.getRequestsByUserId = getRequestsByUserId
