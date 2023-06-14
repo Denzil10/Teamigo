@@ -6,6 +6,7 @@ const eventController = require("../controllers/eventController")
 const inviteController = require("../controllers/inviteController")
 const teamController = require("../controllers/teamController")
 const participantController = require("../controllers/participantController")
+const requestController = require("../controllers/requestController")
 
 //user Routes
 router.post("/users/addUser", userController.addUser);
@@ -18,14 +19,24 @@ router.get("/events/getEvents", eventController.getEvents);
 
 //Team Routes
 router.post("/teams/addTeam", teamController.addTeam); //outdated
-router.get("/teams/getTeamsByEventId", teamController.getTeamsByEventId);
+router.post("/teams/getTeamsByEventId", teamController.getTeamsByEventId);
+router.post("/teams/getTeamsByTeamLeaderId", teamController.getTeamsByTeamLeaderId); //not tested
+
 
 //Invites Routes
-router.post("/invites/addInvite", inviteController.sendInvite); //to be changed
-router.get("/invites/getInvites", inviteController.getInvites); //to be changed
+router.post("/invites/sendInvite", inviteController.sendInvite);
+router.post("/invites/getInvites", inviteController.getInvites); //to be changed
+router.post("/invites/rejectInvite", inviteController.rejectInvite); //to be changed
+
 
 //Participant and Team
 router.post("/participant/addParticipantAndTeam", participantController.addParticipantAndTeam);
+router.post("/participant/getParticipantsByEventId", participantController.getParticipantsByEventId);
 
+
+//Requests Routes
+router.post('/requests/sendRequest', requestController.sendRequest)
+router.post('/requests/getRequestsByUserId', requestController.getRequestsByUserId)
+router.post('/requests/acceptRequest', requestController.acceptRequest)
 
 module.exports = router;

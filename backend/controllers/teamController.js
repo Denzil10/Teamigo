@@ -1,4 +1,4 @@
-const { Team, Event } = require("../models/Model")
+const { Team, Event, User } = require("../models/Model")
 
 //outdated
 const addTeam = async (req, res, next) => {
@@ -23,14 +23,37 @@ const addTeam = async (req, res, next) => {
 }
 
 
-//not complete
 const getTeamsByEventId = async (req, res, next) => {
-    const { teamName, description, leaderMongoId, members, eventId } = req.body;
+    const { eventId } = req.body;
+
+    let event = await Event.find({
+        _id: eventId
+    })
+    let arrOfTeams = event[0].teamIDs;
+    let result = [];
+
+    for (let i = 0; i < arrOfTeams.length; i++) {
+        const element = arrOfTeams[i];
+        const team = await Team.findOne({
+            _id: element
+        })
+        result.push(team)
 
 
+    }
+    res.json({ result: result });
+}
 
-    res.json(result);
+//not tested
+const getTeamsByTeamLeaderId = async (req, res, next) => {
+    const { leaderId } = req.body;
+
+    const result = await Team.find({
+        leaderId: leaderId
+    })
+    res.json({ result: result });
 }
 
 exports.addTeam = addTeam
 exports.getTeamsByEventId = getTeamsByEventId
+exports.getTeamsByTeamLeaderId = getTeamsByTeamLeaderId
