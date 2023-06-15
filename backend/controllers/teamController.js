@@ -2,16 +2,21 @@ const { Team, Event, User } = require("../models/Model")
 
 //outdated
 const addTeam = async (req, res, next) => {
-    const { teamName, description, leaderMongoId, members, eventId } = req.body;
+    const { description, leaderMongoId, members, eventId } = req.body;
+
+    const teamLeader = await User.findOne({
+        _id: leaderMongoId
+    })
     const newTeam = new Team({
-        teamName,
         description,
         leaderId: leaderMongoId,
-        members
+        members,
+        leaderName: teamLeader.name
     })
     const event = await Event.findOne({
         _id: eventId
     })
+
     event.teamIDs.push(newTeam._id)
     const teamResult = await newTeam.save();
     const eventResult = await event.save();
