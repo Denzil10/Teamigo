@@ -25,8 +25,8 @@ router.post("/teams/getTeamsByTeamLeaderId", teamController.getTeamsByTeamLeader
 
 //Invites Routes
 router.post("/invites/sendInvite", inviteController.sendInvite);
-router.post("/invites/getInvites", inviteController.getInvites); //to be changed
-router.post("/invites/rejectInvite", inviteController.rejectInvite); //to be changed
+router.post("/invites/getInvites", inviteController.getInvites);
+router.post("/invites/rejectInvite", inviteController.rejectInvite);
 
 
 //Participant and Team
@@ -38,5 +38,6 @@ router.post("/participant/getParticipantsByEventId", participantController.getPa
 router.post('/requests/sendRequest', requestController.sendRequest)
 router.post('/requests/getRequestsByUserId', requestController.getRequestsByUserId)
 router.post('/requests/acceptRequest', requestController.acceptRequest)
+router.post('/requests/rejectRequest', requestController.rejectRequest)
 
 module.exports = router;
