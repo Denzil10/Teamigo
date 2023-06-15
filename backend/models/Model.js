@@ -31,6 +31,7 @@ const Event = mongoose.model('Events', eventSchema);
 
 const teamsSchema = new Schema({
     leaderId: { type: mongoose.Types.ObjectId, required: true },
+    leaderName: { type: String, required: true },
     description: { type: String, required: true },
     members: [{ type: String, required: true }]
 
