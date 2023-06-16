@@ -6,9 +6,23 @@ const addUser = async (req, res, next) => {
         googleId,
         name
     })
-    const result = await newUser.save();
+    const user = await User.findOne({
+        googleId: googleId
+    })
+    let result
+    if (user) {
+        result = "User already exist "
+    } else {
+        try {
+            result = await newUser.save();
+            result = "added successfully"
+        } catch (error) {
+            result = "Failed"
+        }
 
-    res.json(result);
+    }
+
+    res.json({ result: result });
 }
 
 const getAllUsers = async (req, res, next) => {

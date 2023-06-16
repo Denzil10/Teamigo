@@ -54,7 +54,7 @@ const rejectInvite = async (req, res, next) => {
     res.json({ result: [userResult, inviteResult] });
 }
 
-
+//delete posting of the participant 
 const acceptInvite = async (req, res, next) => {
     const { userId, inviteId } = req.body;
 
