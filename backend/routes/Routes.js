@@ -11,6 +11,7 @@ const requestController = require("../controllers/requestController")
 //user Routes
 router.post("/users/addUser", userController.addUser);
 router.get("/users/getAllUsers", userController.getAllUsers);
+router.post("/users/getMongoIdByGoogleId", userController.getMongoIdByGoogleId);
 
 //Event Routes
 router.post("/events/addEvent", eventController.addEvent);

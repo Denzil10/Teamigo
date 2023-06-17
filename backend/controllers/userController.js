@@ -1,4 +1,4 @@
-const { User } = require("../models/Model")
+const { User, HttpError } = require("../models/Model")
 
 const addUser = async (req, res, next) => {
     const { googleId, name } = req.body;
@@ -21,7 +21,6 @@ const addUser = async (req, res, next) => {
         }
 
     }
-
     res.json({ result: result });
 }
 
@@ -39,5 +38,17 @@ const getAllUsers = async (req, res, next) => {
     res.json({ result: arr })
 }
 
+const getMongoIdByGoogleId = async (req, res, next) => {
+    const { googleId } = req.body
+    const result = await User.findOne({
+        googleId: googleId
+    });
+    if (!result) {
+        next(new HttpError())
+    }
+    res.json({ result })
+}
+
 exports.addUser = addUser;
 exports.getAllUsers = getAllUsers
+exports.getMongoIdByGoogleId = getMongoIdByGoogleId
