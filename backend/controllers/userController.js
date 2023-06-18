@@ -1,33 +1,23 @@
-const { User, HttpError } = require("../models/Model")
+const { User, HttpError, asyncErrorHandler } = require("../models/Model")
 
-const asyncErrorHandler = (func) => {
-    return (req, res, next) => {
-        func(req, res, next).catch(err => next(err));
-    }
-}
-const addUser = async (req, res, next) => {
+const addUser = asyncErrorHandler(async (req, res, next) => {
     const { googleId, name } = req.body;
+    const user = await User.findOne({
+        googleId: googleId
+    })
+    if (user) {
+        throw new HttpError("user already exists", 409)
+    }
     const newUser = new User({
         googleId,
         name
     })
-    const user = await User.findOne({
-        googleId: googleId
-    })
-    let result
-    if (user) {
-        result = "User already exist "
-    } else {
-        try {
-            result = await newUser.save();
-            result = "added successfully"
-        } catch (error) {
-            result = "Failed"
-        }
-
+    const result = await newUser.save();
+    if (!result) {
+        throw new HttpError("adding user failed", 500)
     }
-    res.json({ result: result });
-}
+    res.json({ message: "User created successfully." });
+})
 
 const getAllUsers = async (req, res, next) => {
     const result = await User.find();
