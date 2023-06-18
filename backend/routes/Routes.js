@@ -11,6 +11,7 @@ const requestController = require("../controllers/requestController")
 //user Routes
 router.post("/users/addUser", userController.addUser);
 router.get("/users/getAllUsers", userController.getAllUsers);
+router.post("/users/getMongoIdByGoogleId", userController.getMongoIdByGoogleId);
 
 //Event Routes
 router.post("/events/addEvent", eventController.addEvent);
@@ -18,7 +19,7 @@ router.get("/events/getEvents", eventController.getEvents);
 
 
 //Team Routes
-router.post("/teams/addTeam", teamController.addTeam); //outdated
+router.post("/teams/addTeam", teamController.addTeam);
 router.post("/teams/getTeamsByEventId", teamController.getTeamsByEventId);
 router.post("/teams/getTeamsByTeamLeaderId", teamController.getTeamsByTeamLeaderId); //not tested
 
@@ -27,6 +28,7 @@ router.post("/teams/getTeamsByTeamLeaderId", teamController.getTeamsByTeamLeader
 router.post("/invites/sendInvite", inviteController.sendInvite);
 router.post("/invites/getInvites", inviteController.getInvites);
 router.post("/invites/rejectInvite", inviteController.rejectInvite);
+router.post("/invites/acceptInvite", inviteController.acceptInvite);
 
 
 //Participant and Team
