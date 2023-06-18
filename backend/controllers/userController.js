@@ -1,5 +1,10 @@
 const { User, HttpError } = require("../models/Model")
 
+const asyncErrorHandler = (func) => {
+    return (req, res, next) => {
+        func(req, res, next).catch(err => next(err));
+    }
+}
 const addUser = async (req, res, next) => {
     const { googleId, name } = req.body;
     const newUser = new User({
@@ -38,16 +43,16 @@ const getAllUsers = async (req, res, next) => {
     res.json({ result: arr })
 }
 
-const getMongoIdByGoogleId = async (req, res, next) => {
+const getMongoIdByGoogleId = asyncErrorHandler(async (req, res, next) => {
     const { googleId } = req.body
     const result = await User.findOne({
         googleId: googleId
     });
     if (!result) {
-        next(new HttpError())
+        throw new HttpError("user not found", 404)
     }
-    res.json({ result })
-}
+    res.json({ _id: result._id })
+})
 
 exports.addUser = addUser;
 exports.getAllUsers = getAllUsers

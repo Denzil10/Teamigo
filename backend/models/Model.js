@@ -71,6 +71,11 @@ class HttpError extends Error {
     }
 }
 
+const asyncErrorHandler = (func) => {
+    return (req, res, next) => {
+        func(req, res, next).catch(err => next(err));
+    }
+}
 exports.User = User
 exports.Event = Event
 exports.Team = Team
@@ -78,3 +83,4 @@ exports.Invite = Invite
 exports.Participant = Participant
 exports.Request = Request
 exports.HttpError = HttpError
+exports.asyncErrorHandler = asyncErrorHandler
