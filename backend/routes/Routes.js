@@ -21,7 +21,7 @@ router.get("/events/getEvents", eventController.getEvents);
 //Team Routes
 router.post("/teams/addTeam", teamController.addTeam);
 router.post("/teams/getTeamsByEventId", teamController.getTeamsByEventId);
-router.post("/teams/getTeamsByTeamLeaderId", teamController.getTeamsByTeamLeaderId); //not tested
+router.post("/teams/getTeamsByTeamLeaderId", teamController.getTeamsByTeamLeaderId);
 
 
 //Invites Routes

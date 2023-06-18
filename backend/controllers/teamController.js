@@ -1,39 +1,75 @@
-const { Team, Event, User } = require("../models/Model")
+const { Team, Event, User, HttpError, asyncErrorHandler } = require("../models/Model")
+const mongoose = require('mongoose')
 
-//outdated
-const addTeam = async (req, res, next) => {
+
+const addTeam = asyncErrorHandler(async (req, res, next) => {
     const { description, leaderMongoId, members, eventId } = req.body;
 
     const teamLeader = await User.findOne({
         _id: leaderMongoId
     })
+    if (!teamLeader) {
+        throw new HttpError("leader mongo id not found", 404)
+    }
     const newTeam = new Team({
         description,
         leaderId: leaderMongoId,
         members,
-        leaderName: teamLeader.name
+        leaderName: teamLeader.name,
+        eventId
     })
     const event = await Event.findOne({
         _id: eventId
     })
+    if (!event) {
+        throw new HttpError("event id not found", 404)
+    }
+
+    const team = await Team.findOne({
+        leaderId: leaderMongoId,
+        eventId: eventId
+    })
+    if (team) {
+        throw new HttpError("team leader already has team for event", 409)
+    }
 
     event.teamIDs.push(newTeam._id)
-    const teamResult = await newTeam.save();
-    const eventResult = await event.save();
 
-    res.json({
-        teamResult,
-        eventResult
-    });
-}
+    const session = await mongoose.startSession();
+    session.startTransaction();
 
 
-const getTeamsByEventId = async (req, res, next) => {
+    const teamResult = await newTeam.save({ session });
+    const eventResult = await event.save({ session });
+
+    // if (!teamResult || !eventResult) {
+    //     throw new HttpError("something went wrong in creating team", 500)
+    // }
+
+    session.commitTransaction()
+        .then(() => {
+            res.status(201).json(
+                { message: "Team successfully created" }
+            );
+        })
+        .catch((error) => {
+            throw new HttpError("Creating team failed", 500)
+        })
+        .finally(() => {
+            session.endSession();
+        });
+})
+
+
+const getTeamsByEventId = asyncErrorHandler(async (req, res, next) => {
     const { eventId } = req.body;
 
     let event = await Event.find({
         _id: eventId
     })
+    if (!event) {
+        throw new HttpError("event id not found", 404)
+    }
     let arrOfTeams = event[0].teamIDs;
     let result = [];
 
@@ -44,20 +80,19 @@ const getTeamsByEventId = async (req, res, next) => {
         })
         result.push(team)
 
-
     }
     res.json({ result: result });
-}
+})
 
-//not tested
-const getTeamsByTeamLeaderId = async (req, res, next) => {
+const getTeamsByTeamLeaderId = asyncErrorHandler(async (req, res, next) => {
     const { leaderId } = req.body;
 
     const result = await Team.find({
         leaderId: leaderId
     })
+
     res.json({ result: result });
-}
+})
 
 exports.addTeam = addTeam
 exports.getTeamsByEventId = getTeamsByEventId
