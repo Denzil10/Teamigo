@@ -1,10 +1,8 @@
-const { Event } = require("../models/Model")
+const { Event, asyncErrorHandler, HttpError } = require("../models/Model")
 
-const addEvent = async (req, res, next) => {
-    const { eventName, organizer, description, minTeamSize, maxTeamSize, date, time } = req.body;
+const addEvent = asyncErrorHandler(async (req, res, next) => {
+    const { eventName, organizer, description, minTeamSize, maxTeamSize, timeStamp } = req.body;
 
-
-    let timeStamp = date + "T" + time + ":00Z"
     timeStamp = new Date(timeStamp)
     const newEvent = new Event({
         eventName,
@@ -15,11 +13,14 @@ const addEvent = async (req, res, next) => {
         timeStamp: timeStamp
     })
     const result = await newEvent.save();
+    if (!result) {
+        throw new HttpError("Something went wrong while adding event", 500)
+    }
 
-    res.json(result);
-}
+    res.status(201).json({ message: "Event added successfully" });
+})
 
-const getEvents = async (req, res, next) => {
+const getEvents = asyncErrorHandler(async (req, res, next) => {
     const result = await Event.find();
     let arr = [];
     result.forEach(element => {
@@ -31,6 +32,6 @@ const getEvents = async (req, res, next) => {
         )
     });
     res.json({ result: arr })
-}
+})
 exports.addEvent = addEvent
 exports.getEvents = getEvents
