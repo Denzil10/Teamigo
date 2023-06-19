@@ -1,6 +1,9 @@
+import axios from "axios";
 import React from "react";
 import Options from "./Options.jsx";
 import Form from "./Form.jsx";
+import NavigateToPage from "./NavigateToPage.jsx";
+import { useNavigation } from "react-router-dom";
 
 class Select extends React.Component {
 	constructor(props) {
@@ -11,9 +14,42 @@ class Select extends React.Component {
 			event: "",
 			last_data: this.data["preference"],
 			level: 0,
-			final_opt: "",
+			final_display: "",
+			event_data: [],
 		};
 	}
+
+	componentDidMount() {
+		axios
+			.get("http://localhost:5000/events/getEvents")
+			.then((response) => {
+				this.setState({
+					event_data: response.data.result,
+				});
+			})
+			.catch((error) => {
+				console.log("An error occurred:", error);
+			});
+	}
+
+	// //to redirect to forum
+	// navigateToPage = (parameter) => {
+	// 	const navigate = useNavigation();
+	// 	navigate(`/Forum/${parameter.search_type}/${parameter.event_id}`);
+	// };
+
+	getEventId = () => {
+		let event_name = this.state.event;
+		let event_list = this.state.event_data;
+
+		if (event_list != undefined) {
+			for (let key in event_list) {
+				if (event_list[key].eventName == event_name) {
+					return event_list[key]._id;
+				}
+			}
+		}
+	};
 
 	// Optiontree
 	data = {
@@ -33,7 +69,6 @@ class Select extends React.Component {
 				],
 			},
 		},
-		event: ["ETH India", "Kickstart", "Cult Treasure Hunt"],
 	};
 
 	findFinal(curr) {
@@ -41,7 +76,7 @@ class Select extends React.Component {
 		if (curr == "Request to join a team") {
 			final = "team_list";
 		} else if (curr == "Send invite") {
-			final = "player_list";
+			final = "participant_list";
 		} else if (curr == "Post your availability") {
 			final = "resume_form";
 			this.setState({
@@ -55,7 +90,7 @@ class Select extends React.Component {
 		}
 
 		this.setState({
-			final_opt: final,
+			final_display: final,
 		});
 		return final;
 	}
@@ -100,6 +135,12 @@ class Select extends React.Component {
 		let curr = this.state.current;
 		//this.curr means keeping curr outside gives error
 
+		let event_list = [];
+		for (const obj of this.state.event_data) {
+			event_list.push(obj.eventName);
+		}
+		this.data["event"] = event_list;
+
 		//display event list
 		if (level < 3) {
 			if (this.state.level == 0) {
@@ -112,6 +153,7 @@ class Select extends React.Component {
 					/>
 				);
 			} else {
+				//this has to be checked
 				let temp = Object.keys(this.state.last_data);
 				num = temp.length;
 				return (
@@ -121,15 +163,14 @@ class Select extends React.Component {
 		}
 
 		// PROVIDE FORMS
-		else {
-			console.log(
-				"when returning forms by select " +
-					JSON.stringify(this.props.profileData)
-			);
+		else if (this.state.final_display === "team_list") {
+			return this.props.navToForum(this.getEventId());
+		} else {
 			return (
 				<Form
 					profileData={this.props.profileData}
-					event={this.state.event}
+					event_data={this.state.event_data}
+					curr_event={this.state.event}
 					type={this.state.type}
 				/>
 			);

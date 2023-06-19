@@ -10,18 +10,6 @@ class Form extends React.Component {
 			members: new Array(),
 		};
 	}
-	componentDidMount() {
-		axios
-			.get("http://localhost:5000/events/getEvents")
-			.then((response) => {
-				this.setState({
-					event_data: response.data.result,
-				});
-			})
-			.catch((error) => {
-				console.log("An error occurred:", error);
-			});
-	}
 
 	postOnForum = () => {
 		let profile_data = this.props.profileData;
@@ -40,18 +28,15 @@ class Form extends React.Component {
 	};
 
 	getEventId = () => {
-		let event_name = this.props.event;
-		let event_list = this.state.event_data;
-		console.log(event_list);
-		console.log(event_name);
+		let event_name = this.props.curr_event;
+		let event_list = this.props.event_data;
 
-		if (event_list) {
-			console.log("we in");
-			Object.keys(event_list).forEach((ele) => {
-				if (ele.eventName == event_name) {
-					return ele._id;
+		if (event_list != undefined) {
+			for (let key in event_list) {
+				if (event_list[key].eventName == event_name) {
+					return event_list[key]._id;
 				}
-			});
+			}
 		}
 	};
 
@@ -91,8 +76,6 @@ class Form extends React.Component {
 		});
 		e.target.parentNode.removeChild(e.target);
 		document.getElementById("myDropdown").classList.toggle("show");
-		console.log(typeof this.state.members);
-		console.log(this.state.members);
 	};
 
 	filterFunction = () => {
@@ -112,9 +95,6 @@ class Form extends React.Component {
 	};
 
 	render() {
-		console.log("profile data " + JSON.stringify(this.props.profileData));
-		console.log("event id " + this.getEventId());
-
 		return (
 			<div>
 				<form action="">

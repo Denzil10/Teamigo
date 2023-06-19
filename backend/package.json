@@ -15,7 +15,7 @@
 		"cors": "^2.8.5",
 		"dotenv": "^16.1.4",
 		"express": "^4.18.2",
-		"mongoose": "^7.3.0",
+		"mongoose": "^5.13.12",
 		"mysql": "^2.18.1"
 	},
 	"devDependencies": {

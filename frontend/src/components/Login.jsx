@@ -70,7 +70,7 @@ class Login extends Component {
 							onFailure={this.onFailure}
 							theme="dark"
 							cookiePolicy={"single_host_origin"}
-							isSignedIn={false}
+							isSignedIn={true}
 						/>
 					</div>
 				</form>
