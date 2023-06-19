@@ -30,9 +30,11 @@ const eventSchema = new Schema({
 const Event = mongoose.model('Events', eventSchema);
 
 const teamsSchema = new Schema({
-    leaderId: { type: mongoose.Types.ObjectId, required: true },
+    leaderId: { type: mongoose.Types.ObjectId, required: true, ref: 'User' },
+    leaderName: { type: String, required: true },
     description: { type: String, required: true },
-    members: [{ type: String, required: true }]
+    members: [{ type: String, required: true }],
+    eventId: { type: mongoose.Types.ObjectId, ref: 'Event' }
 
 })
 const Team = mongoose.model('Team', teamsSchema);
@@ -63,9 +65,23 @@ const requestSchema = new Schema({
 })
 const Request = mongoose.model('Request', requestSchema)
 
+class HttpError extends Error {
+    constructor(message, errorCode) {
+        super(message);
+        this.code = errorCode;
+    }
+}
+
+const asyncErrorHandler = (func) => {
+    return (req, res, next) => {
+        func(req, res, next).catch(err => next(err));
+    }
+}
 exports.User = User
 exports.Event = Event
 exports.Team = Team
 exports.Invite = Invite
 exports.Participant = Participant
 exports.Request = Request
+exports.HttpError = HttpError
+exports.asyncErrorHandler = asyncErrorHandler

@@ -87,7 +87,31 @@ const acceptRequest = async (req, res, next) => {
     res.json({ result: [teamResult, requestResult, teamLeaderResult] });
 }
 
+const rejectRequest = async (req, res, next) => {
+    const { requestId, leaderId } = req.body;
+
+    const teamLeader = await User.findOne({
+        _id: leaderId
+    })
+
+    let arrOfRequests = teamLeader.requests;
+    let index = arrOfRequests.indexOf(requestId);
+
+    if (index !== -1) {
+        arrOfRequests.splice(index, 1);
+    }
+
+
+    const requestResult = await Request.deleteOne({
+        _id: requestId
+    })
+    const teamLeaderResult = await teamLeader.save();
+
+
+    res.json({ result: [requestResult, teamLeaderResult] });
+}
 
 exports.sendRequest = sendRequest
 exports.getRequestsByUserId = getRequestsByUserId
 exports.acceptRequest = acceptRequest
+exports.rejectRequest = rejectRequest

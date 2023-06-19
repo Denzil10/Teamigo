@@ -1,4 +1,4 @@
-const { Invite, User } = require("../models/Model")
+const { Invite, User, Team } = require("../models/Model")
 
 
 const sendInvite = async (req, res, next) => {
@@ -54,9 +54,9 @@ const rejectInvite = async (req, res, next) => {
     res.json({ result: [userResult, inviteResult] });
 }
 
-
+//delete posting of the participant 
 const acceptInvite = async (req, res, next) => {
-    const { userId, inviteId, teamId } = req.body;
+    const { userId, inviteId } = req.body;
 
     const user = await User.findOne({
         _id: userId
@@ -68,12 +68,19 @@ const acceptInvite = async (req, res, next) => {
     if (index !== -1) {
         arrOfInvites.splice(index, 1);
     }
-
+    const invite = await Invite.findOne({
+        _id: inviteId
+    })
+    const team = await Team.findOne({
+        _id: invite.sendingTeamId
+    })
+    team.members.push(user.name);
+    const teamResult = await team.save();
     const userResult = await user.save();
     const inviteResult = await Invite.deleteOne({
         _id: inviteId
     })
-    res.json({ result: [userResult, inviteResult] });
+    res.json({ result: [userResult, inviteResult, teamResult] });
 }
 
 exports.sendInvite = sendInvite
