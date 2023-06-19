@@ -1,7 +1,15 @@
 import React, { useState } from "react";
-import Axios from "axios";
+import axios from "axios";
 import { withStyles } from "@material-ui/core/styles";
-import { List, ListItem, ListItemText, Divider } from "@material-ui/core";
+import {
+	List,
+	ListItem,
+	ListItemText,
+	Button,
+	Divider,
+} from "@material-ui/core";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { icon } from "@fortawesome/fontawesome-svg-core/import.macro";
 
 const styles = (theme) => ({
 	root: {
@@ -18,9 +26,12 @@ const styles = (theme) => ({
 		height: "1.7em",
 		// padding: "0 0 0 9em",
 	},
-	name_text: {
+	name_col: {
 		margin: "0 1em 0 6em",
 		width: ".9em",
+	},
+	col: {
+		width: "20%",
 	},
 });
 
@@ -33,40 +44,61 @@ class Mail extends React.Component {
 	}
 
 	componentDidMount() {
-		Axios.get("http://localhost:5000/invite/fetch").then((response) => {
-			this.setState({
-				mail_data: response.data,
+		axios
+			.get("http://localhost:5000/invites/getInvites")
+			.then((response) => {
+				this.setState({
+					mail_data: response.data.result,
+				});
+				// console.log("response", this.state.mail_data[0]);
+			})
+			.catch((error) => {
+				console.log("An error occurred:", error);
 			});
-		});
 	}
 
 	render() {
-		// let mail = this.state.mail_data;
 		const { classes } = this.props;
-		const { mail_data } = this.state;
-		if (mail_data.length > 0) {
-			Object.keys(mail_data).forEach((key) => {
-				mail_data[key]["name_list"] = mail_data[key].team.replace(
-					/[ "\[\] ]/g,
-					""
-				);
-			});
+		let mail_data = this.state.mail_data;
+		if (mail_data != undefined) {
+			let md = JSON.stringify(mail_data);
+			console.log("rendered data " + md);
 		}
+		// if (data.length > 0) {
+		// 	Object.keys(data).forEach((key) => {
+		// 		data[key]["name_list"] = data[key].team.replace(
+		// 			/[ "\[\] ]/g,
+		// 			""
+		// 		);
+		// 	});
+		// }
 
 		return (
 			<div className={classes.root}>
 				<List component="nav" className={classes.box}>
 					{mail_data.map((m) => (
-						<React.Fragment key={m.id} className={classes.row}>
-							<ListItem button>
+						<React.Fragment key={m._id}>
+							<ListItem>
 								<ListItemText
-									className={classes.name_text}
+									className={classes.name_col}
 									primary={`${m.sender}`}
-									// secondary={`Team: ${typeof m.team}`}
 								/>
 								<ListItemText
-									primary={`Join my team for ${m.event}`}
+									className={classes.col}
+									primary={`Join my team for ${m.eventName}`}
 								/>
+								<Button>
+									<FontAwesomeIcon
+										icon={icon({ name: "check" })}
+									/>
+								</Button>
+								<Button>
+									<FontAwesomeIcon
+										icon={icon({ name: "xmark" })}
+									/>
+								</Button>
+							</ListItem>
+							<ListItem>
 								<ListItemText primary={m.name_list} />
 							</ListItem>
 							<Divider />

@@ -1,7 +1,6 @@
 import React from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Select from "./Select";
-import Form from "./Form";
-import { GoogleSignIn } from "react-google-login";
 
 class Landing extends React.Component {
 	render() {
@@ -15,8 +14,8 @@ class Landing extends React.Component {
 			</a>
 		);
 
-		let data = this.props.profileData;
-		if (typeof data != undefined) {
+		if (this.props.profileData != undefined) {
+			let data = this.props.profileData;
 			if (Object.keys(data).length > 0) {
 				let first_name = data.name.split(" ");
 				first_name = first_name[0];
@@ -25,7 +24,6 @@ class Landing extends React.Component {
 						<i class="fa-solid fa-user"></i> {first_name}
 					</div>
 				);
-				console.log(loginbtn);
 			}
 		}
 
@@ -74,13 +72,12 @@ class Landing extends React.Component {
 								<p>
 									Find the right people or help them find you
 								</p>
-								<a
+								<div
 									className="btn btn-primary col-md-6 custom-btn"
-									href="#select"
 									onClick={this.props.onLogin}
 								>
 									Build that team now
-								</a>
+								</div>
 							</div>
 						</div>
 						<div className="column col-4 hide-sm">
@@ -92,11 +89,17 @@ class Landing extends React.Component {
 						</div>
 					</div>
 				</div>
-
-				<div id="select" className="container d-flex flex-row">
-					<Select profileData={this.props.profileData} />
-					<Form />
-				</div>
+				<Routes>
+					<Route
+						path=""
+						element={
+							<Select
+								navToForum={this.props.navToForum}
+								profileData={this.props.profileData}
+							/>
+						}
+					/>
+				</Routes>
 			</div>
 		);
 	}

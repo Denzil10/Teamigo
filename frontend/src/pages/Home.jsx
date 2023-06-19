@@ -1,7 +1,9 @@
-import React, { useEffect, useState } from "react";
-import Layout from "../components/Layout.jsx";
-import Landing from "../components/Landing.jsx";
-import Login from "../components/Login.jsx";
+import React from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Layout from "../components/Layout";
+import Landing from "../components/Landing";
+import Login from "../components/Login";
+import NavigateToPage from "../components/NavigateToPage";
 
 class Home extends React.Component {
 	constructor(props) {
@@ -12,41 +14,68 @@ class Home extends React.Component {
 		};
 	}
 
+	handleLoginSuccess = (data) => {
+		console.log("successful login");
+		this.setState({
+			login: 2,
+			profileData: data,
+		});
+	};
+
+	handleLogin = () => {
+		this.setState({
+			login: 1,
+		});
+	};
+
+	nav = (e_id) => {
+		return (
+			<NavigateToPage
+				parameter={{
+					search_type: "teams",
+					event_id: e_id,
+				}}
+			/>
+		);
+	};
+
 	render() {
-		if (this.state.login == 1) {
-			return (
-				<Layout title="Home / teamfinder">
-					<Landing
-						login={this.state.login}
-						profileData={this.state.profileData}
-					/>
-					<Login
-						onLoginSuccess={(data) => {
-							console.log("successful login ");
-							this.setState({
-								login: 2,
-								profileData: data,
-							});
-						}}
-					/>
-				</Layout>
-			);
-		} else {
-			return (
-				<Layout title="Home / teamfinder">
-					<Landing
-						//always do data manipultaion before setting state
-						profileData={this.state.profileData}
-						onLogin={() => {
-							this.setState({
-								login: 1,
-							});
-						}}
-					/>
-				</Layout>
-			);
-			// }
-		}
+		const LandingAndLogin = (hlog, hlogsucc) => (
+			<div>
+				<Landing
+					// profileData={this.state.profileData}
+					onLogin={hlog()}
+				/>
+				<Login onLoginSuccess={hlogsucc()} />
+			</div>
+		);
+
+		return (
+			<Layout title="Home / teamfinder">
+				<Routes>
+					{this.state.login === 0 || this.state.login === 2 ? (
+						<Route
+							path=""
+							element={
+								<Landing
+									navToForum={this.nav}
+									profileData={this.state.profileData}
+									onLogin={this.handleLogin}
+								/>
+							}
+						/>
+					) : (
+						<Route
+							path=""
+							element={LandingAndLogin(
+								this.handleLogin,
+								this.handleLoginSuccess
+							)}
+						/>
+					)}
+				</Routes>
+			</Layout>
+		);
 	}
 }
 

@@ -1,13 +1,13 @@
-* {
+/* * {
 	margin: 0;
 	padding: 0;
 }
 
 #forum_display {
-	/* here i dont understand why justify center collapses */
-	margin: auto;
+	here i dont understand why justify center collapses
+	margin: 0 auto;
 	margin-top: 9em;
-	width: 60em;
+	width: 180em;
 	height: 20em;
 	background-color: rgb(87, 174, 224);
 	box-sizing: border-box;
@@ -17,7 +17,7 @@
 	margin-top: 2em;
 	background-color: aliceblue;
 	height: 5em;
-	width: 90%;
+	width: 300%;
 	box-sizing: border-box;
 }
 .toprow {
@@ -29,9 +29,9 @@
 }
 
 .col1 {
-	width: 14%;
+	width: 20%;
 }
 
 form {
 	width: 105%;
-}
+} */

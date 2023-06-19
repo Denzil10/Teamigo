@@ -1,6 +1,7 @@
 import React from "react";
 import axios from "axios";
 import Options from "./Options";
+
 class Form extends React.Component {
 	constructor(props) {
 		super(props);
@@ -11,32 +12,31 @@ class Form extends React.Component {
 	}
 
 	postOnForum = () => {
-		let data = this.props.profileData;
-		// if (typeof data != undefined) {
-		// 	if (Object.keys(data).length > 0) {
-		// 		let namee = data.name;
-		// 	}
-		// }
+		let profile_data = this.props.profileData;
 		let box = document.querySelector("#post_box");
+		if (profile_data.name == undefined) profile_data.name = "need login";
 
-		if (data.name == undefined) data.name = "need login";
+		//post only if person is logged in
 
-		axios.post("http://localhost:5000/blog/post", {
-			name: `${data.name}`,
-			msg: `${box.value}`,
-			event: `${this.props.event}`,
-			type: `${this.props.type}`,
+		axios.post("http://localhost:5000/participant/addParticipantAndTeam", {
+			google_id: `${profile_data.googleId}`,
+			desc: `${box.value}`,
+			event_id: this.getEventId(),
+			type_id: `${this.props.type}`,
 			team: `${JSON.stringify(this.state.members)}`,
 		});
+	};
 
-		//if they are executed in different order then problem can occur
+	getEventId = () => {
+		let event_name = this.props.curr_event;
+		let event_list = this.props.event_data;
 
-		if (this.state.members.length > 0) {
-			axios.post("http://localhost:5000/team/add", {
-				leader: `${data.name}`,
-				event: `${this.props.event}`,
-				team: `${JSON.stringify(this.state.members)}`,
-			});
+		if (event_list != undefined) {
+			for (let key in event_list) {
+				if (event_list[key].eventName == event_name) {
+					return event_list[key]._id;
+				}
+			}
 		}
 	};
 
@@ -76,8 +76,6 @@ class Form extends React.Component {
 		});
 		e.target.parentNode.removeChild(e.target);
 		document.getElementById("myDropdown").classList.toggle("show");
-		console.log(typeof this.state.members);
-		console.log(this.state.members);
 	};
 
 	filterFunction = () => {
