@@ -1,17 +1,35 @@
-const { Request, Team, User } = require("../models/Model")
+const { Request, Team, User, asyncErrorHandler, HttpError } = require("../models/Model")
 
 
-const sendRequest = async (req, res, next) => {
+const sendRequest = asyncErrorHandler(async (req, res, next) => {
     const { sendingParticipantId, description, eventId, teamId } = req.body;
+
+    const team = await Team.findOne({
+        _id: teamId
+    })
+    if (!team) {
+        throw new HttpError("Team not found", 404)
+    }
+
+    const participant = await User.findOne({
+        _id: sendingParticipantId
+    })
+    if (!participant) {
+        throw new HttpError("Participant not found", 404)
+    }
+
+    const event = await Event.findOne({
+        _id: eventId
+    })
+    if (!event) {
+        throw new HttpError("event not found", 404)
+    }
 
     const newRequest = new Request({
         sendingParticipantId,
         description,
         eventId,
         teamId
-    })
-    const team = await Team.findOne({
-        _id: teamId
     })
     const teamLeaderId = team.leaderId;
     let teamLeader = await User.findOne({
@@ -21,16 +39,23 @@ const sendRequest = async (req, res, next) => {
 
     const requestResult = await newRequest.save();
     const teamLeaderResult = await teamLeader.save();
-    res.json({ result: [requestResult, teamLeaderResult] });
-}
+
+    if (!requestResult || !teamLeaderResult) {
+        throw new HttpError("something went wrong while sending request", 500)
+    }
+    res.status(201).json({ message: "request successfully sent" });
+})
 
 
 
-const getRequestsByUserId = async (req, res, next) => {
+const getRequestsByUserId = asyncErrorHandler(async (req, res, next) => {
     const { userId } = req.body;
     const user = await User.findOne({
         _id: userId
     })
+    if (!user) {
+        throw new HttpError("user not found", 404)
+    }
     const arrOfRequestId = user.requests;
 
     let arr = [];
@@ -40,16 +65,19 @@ const getRequestsByUserId = async (req, res, next) => {
         arr.push(request)
     }
     res.json({ result: arr })
-}
+})
 
-
-const acceptRequest = async (req, res, next) => {
+const acceptRequest = (async (req, res, next) => {
     const { requestId } = req.body;
 
     const request = await Request.findOne({
         _id: requestId
 
     })
+    if (!request) {
+        throw new HttpError("request not found", 404)
+    }
+
     const sendingParticipant = await User.findOne({
         _id: request.sendingParticipantId
     });
@@ -82,17 +110,32 @@ const acceptRequest = async (req, res, next) => {
         _id: requestId
     })
     const teamLeaderResult = await teamLeader.save();
+    if (!teamResult || !rejectRequest || !teamLeaderResult) {
+        throw new HttpError("something went wrong while accepting request", 500)
+    }
+
+    res.json({ message: "request accepted successfully" });
+})
 
 
-    res.json({ result: [teamResult, requestResult, teamLeaderResult] });
-}
-
-const rejectRequest = async (req, res, next) => {
+const rejectRequest = asyncErrorHandler(async (req, res, next) => {
     const { requestId, leaderId } = req.body;
 
     const teamLeader = await User.findOne({
         _id: leaderId
     })
+
+    if (!teamLeader) {
+        throw new HttpError("leader not found", 404)
+    }
+
+    const request = await User.findOne({
+        _id: requestId
+    })
+
+    if (!request) {
+        throw new HttpError("request not found", 404)
+    }
 
     let arrOfRequests = teamLeader.requests;
     let index = arrOfRequests.indexOf(requestId);
@@ -107,9 +150,11 @@ const rejectRequest = async (req, res, next) => {
     })
     const teamLeaderResult = await teamLeader.save();
 
-
+    if (!rejectRequest || !teamLeaderResult) {
+        throw new HttpError("something went wrong while rejecting request", 500)
+    }
     res.json({ result: [requestResult, teamLeaderResult] });
-}
+})
 
 exports.sendRequest = sendRequest
 exports.getRequestsByUserId = getRequestsByUserId
