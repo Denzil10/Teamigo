@@ -78,7 +78,8 @@ const getTeamsByEventId = asyncErrorHandler(async (req, res, next) => {
         const team = await Team.findOne({
             _id: element
         })
-        result.push(team)
+        //dont push null elements causes error on backend - Denzil
+        if (team) result.push(team)
 
     }
     res.json({ result: result });
