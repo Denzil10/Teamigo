@@ -23,6 +23,11 @@ const addParticipantAndTeam = asyncErrorHandler(async (req, res, next) => {
         participantId: userId
     })
     if (participant) {
+        participant.description = description
+        const result = await participant.save();
+        if (result) {
+            throw new HttpError("description updated", 200)
+        }
         throw new HttpError("Already a participant for event", 409)
     }
 

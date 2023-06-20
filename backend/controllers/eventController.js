@@ -3,7 +3,6 @@ const { Event, asyncErrorHandler, HttpError } = require("../models/Model")
 const addEvent = asyncErrorHandler(async (req, res, next) => {
     const { eventName, organizer, description, minTeamSize, maxTeamSize, timeStamp } = req.body;
 
-    timeStamp = new Date(timeStamp)
     const newEvent = new Event({
         eventName,
         organizer,

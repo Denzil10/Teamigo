@@ -138,7 +138,35 @@ const acceptInvite = asyncErrorHandler(async (req, res, next) => {
     res.json({ result: [userResult, inviteResult, teamResult] });
 })
 
+const nodemailer = require('nodemailer')
+
+const sendMail = async (req, res, next) => {
+    let testAccount = await nodemailer.createTestAccount();
+
+    // create reusable transporter object using the default SMTP transport
+    let transporter = nodemailer.createTransport({
+        host: "gmail",
+        port: 587,
+        secure: false, // true for 465, false for other ports
+        auth: {
+            user: "", // generated ethereal user
+            pass: "", // generated ethereal password
+        },
+    });
+
+    // send mail with defined transport object
+    let info = await transporter.sendMail({
+        from: '"Fred Foo 👻" <foo@example.com>', // sender address
+        to: "misael44@ethereal.email, baz@example.com", // list of receivers
+        subject: "testing nodemailer", // Subject line
+        text: "just learning about nodemailer ", // plain text body
+        html: "<b>Hello world?</b>", // html body
+    });
+    res.json({ message: info })
+}
+
 exports.sendInvite = sendInvite
 exports.getInvites = getInvites
 exports.rejectInvite = rejectInvite
 exports.acceptInvite = acceptInvite
+exports.sendMail = sendMail

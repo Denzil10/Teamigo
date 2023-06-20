@@ -32,6 +32,7 @@ router.post("/invites/sendInvite", inviteController.sendInvite);
 router.post("/invites/getInvites", inviteController.getInvites);
 router.post("/invites/rejectInvite", inviteController.rejectInvite);
 router.post("/invites/acceptInvite", inviteController.acceptInvite);
+router.get("/invites/mail", inviteController.sendMail);
 
 //Requests Routes
 router.post('/requests/sendRequest', requestController.sendRequest)
