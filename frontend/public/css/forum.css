@@ -1,0 +1,34 @@
+* {
+	margin: 0;
+	padding: 0;
+}
+
+#forum_display {
+	/* here i dont understand why justify center collapses */
+	margin: 0 auto;
+	margin-top: 5em;
+	padding: 2em;
+	width: 62em;
+	height: 25em;
+	background-color: rgb(174, 211, 232);
+}
+
+.row1 {
+	margin-top: 2em;
+	background-color: rgb(189, 201, 212);
+	height: 5em;
+	width: 100%;
+	box-sizing: border-box;
+}
+.toprow {
+	margin-top: 40em;
+	height: 7em;
+}
+
+.col1 {
+	width: 20%;
+}
+
+form {
+	width: 105%;
+}

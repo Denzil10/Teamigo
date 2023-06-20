@@ -2,7 +2,6 @@ import React from "react";
 import { useParams } from "react-router-dom";
 import Layout from "../components/Layout";
 import Blog from "../components/Blog";
-import "../css/forum.css";
 
 function withParams(Component) {
 	return (props) => <Component {...props} params={useParams()} />;
@@ -21,7 +20,7 @@ class Forum extends React.Component {
 	render() {
 		return (
 			<Layout title="Forum /teamfinder">
-				<div className="container flex justify-center items-center h-screen">
+				<div className="container flex justify-content-center items-center h-screen">
 					<Blog params={this.props.params} />
 				</div>
 			</Layout>

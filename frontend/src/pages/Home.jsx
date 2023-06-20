@@ -28,11 +28,11 @@ class Home extends React.Component {
 		});
 	};
 
-	nav = (e_id) => {
+	nav = (search_t, e_id) => {
 		return (
 			<NavigateToPage
 				parameter={{
-					search_type: "teams",
+					search_type: search_t,
 					event_id: e_id,
 				}}
 			/>

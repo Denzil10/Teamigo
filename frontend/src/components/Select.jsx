@@ -2,8 +2,6 @@ import axios from "axios";
 import React from "react";
 import Options from "./Options.jsx";
 import Form from "./Form.jsx";
-import NavigateToPage from "./NavigateToPage.jsx";
-import { useNavigation } from "react-router-dom";
 
 class Select extends React.Component {
 	constructor(props) {
@@ -31,12 +29,6 @@ class Select extends React.Component {
 				console.log("An error occurred:", error);
 			});
 	}
-
-	// //to redirect to forum
-	// navigateToPage = (parameter) => {
-	// 	const navigate = useNavigation();
-	// 	navigate(`/Forum/${parameter.search_type}/${parameter.event_id}`);
-	// };
 
 	getEventId = () => {
 		let event_name = this.state.event;
@@ -74,9 +66,9 @@ class Select extends React.Component {
 	findFinal(curr) {
 		let final = "";
 		if (curr == "Request to join a team") {
-			final = "team_list";
+			final = "teams";
 		} else if (curr == "Send invite") {
-			final = "participant_list";
+			final = "participants";
 		} else if (curr == "Post your availability") {
 			final = "resume_form";
 			this.setState({
@@ -130,10 +122,10 @@ class Select extends React.Component {
 	render() {
 		//SHOW USER ALL OPTIONS
 		let num;
-		let level = this.state.level;
 		//all variables that need changing needs to be in fns like render otherwise it wont get updated in class
 		let curr = this.state.current;
 		//this.curr means keeping curr outside gives error
+		const { final_display, level } = this.state;
 
 		let event_list = [];
 		for (const obj of this.state.event_data) {
@@ -143,7 +135,7 @@ class Select extends React.Component {
 
 		//display event list
 		if (level < 3) {
-			if (this.state.level == 0) {
+			if (level == 0) {
 				num = this.data["event"].length;
 				return (
 					<Options
@@ -163,8 +155,8 @@ class Select extends React.Component {
 		}
 
 		// PROVIDE FORMS
-		else if (this.state.final_display === "team_list") {
-			return this.props.navToForum(this.getEventId());
+		else if (final_display === "teams" || final_display == "participants") {
+			return this.props.navToForum(final_display, this.getEventId());
 		} else {
 			return (
 				<Form
