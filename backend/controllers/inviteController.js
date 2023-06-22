@@ -1,5 +1,4 @@
-const { Invite, User, Team, asyncErrorHandler, HttpError, Participant } = require("../models/Model")
-const env = require('dotenv').config()
+const { Invite, User, Team, asyncErrorHandler, HttpError, Participant, sendMail, Event } = require("../models/Model")
 
 const sendInvite = asyncErrorHandler(async (req, res, next) => {
     const { sendingTeamId, description, eventId, recipientId } = req.body;
@@ -113,7 +112,10 @@ const acceptInvite = asyncErrorHandler(async (req, res, next) => {
     if (!invite) {
         throw new HttpError("invite not found", 404)
     }
-
+    const event = await Event.findOne({
+        _id: invite.eventId
+    })
+    const eventId = invite.eventId
     const team = await Team.findOne({
         _id: invite.sendingTeamId
     })
@@ -132,37 +134,52 @@ const acceptInvite = asyncErrorHandler(async (req, res, next) => {
         eventId: eventId
     })
 
+    //code for sending mail
+    const leader = await User.findOne({
+        _id: team.leaderId
+    })
+    const mailSubject = "Invitation Accepted"
+    const mailContent = user.name
+        + " accepted your invitation for joining your team for the event "
+        + event.eventName
+    const mailResult = sendMail(leader.mailId, mailSubject, mailContent)
+
+
+
+
     if (!teamResult || !userResult || !inviteResult || !participantResult) {
         throw new HttpError("Something went wrong while accepting request", 500)
     }
-    res.json({ result: [userResult, inviteResult, teamResult] });
+    res.json({ message: "Invite successfully accepted" });
 })
 
-const nodemailer = require('nodemailer')
 
-const sendMail = async (req, res, next) => {
+const sendMaile = async (req, res, next) => {
 
     // create reusable transporter object using the default SMTP transport
-    let transporter = nodemailer.createTransport({
-        service: "hotmail",
-        auth: {
-            user: process.env.MAIL_ID, // generated ethereal user
-            pass: process.env.MAIL_PASSWORD, // generated ethereal password
-        },
-    });
-    // send mail with defined transport object
-    let info = await transporter.sendMail({
-        from: '"Sasuke Sharingan👻" <teamigo.no.reply@outlook.com>', // sender address
-        to: "user@gmail.com, baz@example.com , baz@example.com", // list of receivers
-        subject: "testing nodemailer", // Subject line
-        text: "just learning about nodemailer this using env ", // plain text body
-        //html: "<b>Hello world? this froom express dude nust env</b>", // html body
-    });
-    res.json({ message: info })
+    // let transporter = nodemailer.createTransport({
+    //     service: "hotmail",
+    //     auth: {
+    //         user: process.env.MAIL_ID, // generated ethereal user
+    //         pass: process.env.MAIL_PASSWORD, // generated ethereal password
+    //     },
+    // });
+    // // send mail with defined transport object
+    // let info = await transporter.sendMail({
+    //     from: '"Sasuke Sharingan👻" <teamigo.no.reply@outlook.com>', // sender address
+    //     to: "user@gmail.com, baz@example.com , baz@example.com", // list of receivers
+    //     subject: "testing nodemailer", // Subject line
+    //     text: "just learning about nodemailer this using env ", // plain text body
+    //     //html: "<b>Hello world? this froom express dude nust env</b>", // html body
+    // });
+    //res.json({ message: info })
+    const result = await sendMail("omkr.g.0807@gmail.com", "this is a subject", "sending using function")
+    console.log(result)
+    res.json({ message: "success full bhai" })
 }
 
 exports.sendInvite = sendInvite
 exports.getInvites = getInvites
 exports.rejectInvite = rejectInvite
 exports.acceptInvite = acceptInvite
-exports.sendMail = sendMail
+exports.sendMail = sendMaile

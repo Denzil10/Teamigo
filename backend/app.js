@@ -26,9 +26,11 @@ app.use((error, req, res, next) => {
     res.json({ message: error.message || "An unknown error occurred" });
 });
 
+mongoose.set('useUnifiedTopology', true); //added to fix deprecation warnings 
 mongoose
     .connect(
-        process.env.MONGO_URL
+        process.env.MONGO_URL,
+        { useNewUrlParser: true } //added to fix deprecation warnings 
     )
     .then(() => {
         console.log("connection successful");

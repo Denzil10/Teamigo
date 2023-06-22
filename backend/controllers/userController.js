@@ -1,7 +1,7 @@
 const { User, HttpError, asyncErrorHandler } = require("../models/Model")
 
 const addUser = asyncErrorHandler(async (req, res, next) => {
-    const { googleId, name } = req.body;
+    const { googleId, name, mailId } = req.body;
     const user = await User.findOne({
         googleId: googleId
     })
@@ -10,7 +10,8 @@ const addUser = asyncErrorHandler(async (req, res, next) => {
     }
     const newUser = new User({
         googleId,
-        name
+        name,
+        mailId
     })
     const result = await newUser.save();
     if (!result) {

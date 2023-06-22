@@ -1,9 +1,11 @@
 const mongoose = require('mongoose')
+const nodemailer = require('nodemailer')
 const Schema = mongoose.Schema
 
 const userSchema = new Schema({
     googleId: { type: String, required: true },
     name: { type: String, required: true },
+    mailId: { type: String, required: true },
     invites: [{ type: mongoose.Types.ObjectId, required: true, ref: 'Invites' }],
     requests: [{ type: mongoose.Types.ObjectId, required: true, ref: 'Requests' }]
 
@@ -77,6 +79,26 @@ const asyncErrorHandler = (func) => {
         func(req, res, next).catch(err => next(err));
     }
 }
+
+const sendMail = async (userMail, subject, content) => {
+    let transporter = nodemailer.createTransport({
+        service: "hotmail",
+        auth: {
+            user: process.env.MAIL_ID,
+            pass: process.env.MAIL_PASSWORD,
+        },
+    });
+
+    let info = await transporter.sendMail({
+        from: '"TeamIGO-no-reply" <teamigo.no.reply@outlook.com>', // sender address
+        to: userMail, // list of receivers
+        subject: subject, // Subject line
+        text: content, // plain text body
+        //html: "<b>Hello world? this froom express dude nust env</b>", // html body
+    });
+    return info
+}
+
 exports.User = User
 exports.Event = Event
 exports.Team = Team
@@ -85,3 +107,4 @@ exports.Participant = Participant
 exports.Request = Request
 exports.HttpError = HttpError
 exports.asyncErrorHandler = asyncErrorHandler
+exports.sendMail = sendMail
