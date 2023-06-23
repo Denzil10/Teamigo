@@ -1,9 +1,16 @@
-const { Request, Team, User, asyncErrorHandler, HttpError } = require("../models/Model")
+const { Request, Team, User, asyncErrorHandler, HttpError, Participant, Event, sendMail } = require("../models/Model")
 
 
 const sendRequest = asyncErrorHandler(async (req, res, next) => {
     const { sendingParticipantId, description, eventId, teamId } = req.body;
 
+    const request = await Request.findOne({
+        sendingParticipantId,
+        eventId
+    })
+    if (request) {
+        throw new HttpError("Request is already sent ", 409);
+    }
     const team = await Team.findOne({
         _id: teamId
     })
@@ -11,7 +18,7 @@ const sendRequest = asyncErrorHandler(async (req, res, next) => {
         throw new HttpError("Team not found", 404)
     }
 
-    const participant = await User.findOne({
+    const participant = await Participant.findOne({
         _id: sendingParticipantId
     })
     if (!participant) {
@@ -67,7 +74,7 @@ const getRequestsByUserId = asyncErrorHandler(async (req, res, next) => {
     res.json({ result: arr })
 })
 
-const acceptRequest = (async (req, res, next) => {
+const acceptRequest = asyncErrorHandler(async (req, res, next) => {
     const { requestId } = req.body;
 
     const request = await Request.findOne({
@@ -78,14 +85,16 @@ const acceptRequest = (async (req, res, next) => {
         throw new HttpError("request not found", 404)
     }
 
-    const sendingParticipant = await User.findOne({
+    const sendingParticipant = await Participant.findOne({
         _id: request.sendingParticipantId
     });
-
+    const sendingUser = await User.findOne({
+        _id: sendingParticipant.participantId
+    })
     const team = await Team.findOne({
         _id: request.teamId
     })
-    team.members.push(sendingParticipant.name);
+    team.members.push(sendingUser.name);
 
 
     const teamLeader = await User.findOne({
@@ -100,19 +109,22 @@ const acceptRequest = (async (req, res, next) => {
         arrOfRequests.splice(index, 1);
     }
 
-
-    //code to be added
-    //to send notification that request is accepted
-    //by the team leader
-
     const teamResult = await team.save();
     const requestResult = await Request.deleteOne({
         _id: requestId
     })
     const teamLeaderResult = await teamLeader.save();
-    if (!teamResult || !rejectRequest || !teamLeaderResult) {
+    if (!teamResult || !requestResult || !teamLeaderResult) {
         throw new HttpError("something went wrong while accepting request", 500)
     }
+    const event = await Event.findOne({
+        _id: team.eventId
+    })
+    const mailSubject = "Request Accepted"
+    const mailContent = teamLeader.name
+        + " accepted your request for joining  team for the event "
+        + event.eventName
+    const mailResult = sendMail(sendingUser.mailId, mailSubject, mailContent)
 
     res.json({ message: "request accepted successfully" });
 })
